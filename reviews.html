@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MINIMA — Customer Feedback</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <a class="brand" href="index.html"><span class="dot"></span><span>MINIMA</span></a>
+    <nav>
+      <a href="shop.html">Shop</a>
+      <a href="reviews.html">Feedback</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="actions">
+      <a class="btn" href="shop.html">Shop</a>
+      <a class="btn primary" href="shop.html#women">Shop Now</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="kicker">Customer Feedback</div>
+        <h1>Real reviews build real trust.</h1>
+        <p class="sub">
+          A space to showcase customer feedback.
+        </p>
+      </div>
+      <div class="hero-box">
+        <div class="pill">⭐ <b>Trust</b> booster</div>
+        <div class="pill">🧾 <b>Proof</b> of satisfaction</div>
+        <div class="pill">📣 <b>Better sales</b> conversion</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="two-col">
+      <div class="panel">
+        <h2 class="page-title">Add Feedback</h2>
+        <p class="page-sub">Fill in the customer information.</p>
+        <div class="hr"></div>
+
+        <label class="small">Customer Name</label>
+        <input class="input" id="name" placeholder="e.g., Aina" />
+
+        <div style="height:10px;"></div>
+
+        <label class="small">Rating (1–5)</label>
+        <input class="input" id="rating" type="number" min="1" max="5" placeholder="5" />
+
+        <div style="height:10px;"></div>
+
+        <label class="small">Message</label>
+        <textarea id="message" placeholder="Write a short review..."></textarea>
+
+        <div style="height:12px;"></div>
+        <button class="btn primary" id="saveBtn">Save Feedback</button>
+        <button class="btn" id="clearBtn" type="button">Clear All</button>
+
+        <div class="small" style="margin-top:10px;">
+          Note: This saves in your browser only.
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2 class="page-title">Reviews</h2>
+        <p class="page-sub">Displayed from saved data.</p>
+        <div class="hr"></div>
+
+        <div id="list" style="display:flex; flex-direction:column; gap:10px;"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © <span id="year"></span> MINIMA • Customer Feedback
+  </footer>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+  const KEY = "minima_reviews_v1";
+  const $ = (id) => document.getElementById(id);
+
+  function load(){
+    try { return JSON.parse(localStorage.getItem(KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function save(arr){
+    localStorage.setItem(KEY, JSON.stringify(arr));
+  }
+  function render(){
+    const data = load();
+    const el = $("list");
+    if(data.length === 0){
+      el.innerHTML = `<div class="small">No feedback yet. Add the first review.</div>`;
+      return;
+    }
+    el.innerHTML = data.map(r => `
+      <div class="panel" style="padding:14px;">
+        <b>${escapeHtml(r.name)}</b>
+        <div class="small">Rating: ${"⭐".repeat(Math.max(1, Math.min(5, r.rating)))} (${r.rating}/5)</div>
+        <div class="small" style="margin-top:8px;">${escapeHtml(r.message)}</div>
+      </div>
+    `).join("");
+  }
+
+  $("saveBtn").addEventListener("click", () => {
+    const name = $("name").value.trim();
+    const rating = Number($("rating").value || 5);
+    const message = $("message").value.trim();
+
+    if(!name || !message){
+      alert("Please fill name and message.");
+      return;
+    }
+    const safeRating = Math.max(1, Math.min(5, rating || 5));
+
+    const data = load();
+    data.unshift({ name, rating: safeRating, message });
+    save(data);
+
+    $("name").value = "";
+    $("rating").value = "5";
+    $("message").value = "";
+    render();
+  });
+
+  $("clearBtn").addEventListener("click", () => {
+    if(confirm("Clear all feedback?")){
+      localStorage.removeItem(KEY);
+      render();
+    }
+  });
+
+  render();
+</script>
+</body>
+</html>

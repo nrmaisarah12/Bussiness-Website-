@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MINIMA — Shop</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <a class="brand" href="index.html">
+      <span class="dot"></span><span>MINIMA</span>
+    </a>
+
+    <nav>
+      <a href="#women">Women</a>
+      <a href="#men">Men</a>
+      <a href="#kids">Kids</a>
+      <a href="about.html">About</a>
+      <a href="team.html">Team</a>
+      <a href="reviews.html">Feedback</a>
+    </nav>
+
+    <div class="actions">
+      <button class="btn" id="openCartBtn">
+        Cart <span class="badge" id="cartCount">0</span>
+      </button>
+      <a class="btn primary" href="#women">Shop Now</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="kicker">Shop • Minimal • Aesthetic</div>
+        <h1>A seamless way to shop your style.</h1>
+        <p class="sub">
+         Browse. Filter. Checkout.
+         Connected directly to TikTok.
+        </p>
+        <div class="hero-actions">
+          <button class="btn primary" onclick="scrollToSection('women')">Women</button>
+          <button class="btn" onclick="scrollToSection('men')">Men</button>
+          <button class="btn" onclick="scrollToSection('kids')">Kids</button>
+        </div>
+      </div>
+      <div class="hero-box">
+        <div class="pill">📏 <b>Need sizing?</b> Open <a href="size-guide.html"><u>Size Guide</u></a></div>
+        <div class="pill">🚚 <b>Shipping info</b> on <a href="shipping-returns.html"><u>Shipping & Returns</u></a></div>
+        <div class="pill">❓ <b>Questions?</b> Read <a href="faq.html"><u>FAQ</u></a></div>
+        <div class="pill">☎️ <b>Contact</b> via <a href="contact.html"><u>Contact page</u></a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="controls" aria-label="Search and filter">
+    <input class="search" id="searchInput" placeholder="Search product (e.g., linen, hoodie, kids)..." />
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-filter="all">All</button>
+      <button class="tab" data-filter="women">Women</button>
+      <button class="tab" data-filter="men">Men</button>
+      <button class="tab" data-filter="kids">Kids</button>
+      <button class="tab" data-filter="new">New</button>
+    </div>
+  </section>
+
+  <!-- WOMEN -->
+  <section class="section" id="women">
+    <div class="section-head">
+      <div>
+        <h2>Women</h2>
+        <p>Soft tones. Easy matching. Daily comfort.</p>
+      </div>
+    </div>
+    <div class="grid" id="womenGrid"></div>
+  </section>
+
+  <!-- MEN -->
+  <section class="section" id="men">
+    <div class="section-head">
+      <div>
+        <h2>Men</h2>
+        <p>Minimal cuts with clean silhouettes.</p>
+      </div>
+    </div>
+    <div class="grid" id="menGrid"></div>
+  </section>
+
+  <!-- KIDS -->
+  <section class="section" id="kids">
+    <div class="section-head">
+      <div>
+        <h2>Kids</h2>
+        <p>Comfort-first designs for active days.</p>
+      </div>
+    </div>
+    <div class="grid" id="kidsGrid"></div>
+  </section>
+
+  <footer>
+    © <span id="year"></span> MINIMA • Shop page • TikTok purchase links supported
+  </footer>
+</div>
+
+<!-- CART UI -->
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer" aria-label="Shopping cart drawer">
+  <div class="drawer-head">
+    <h3>Your Cart</h3>
+    <button class="btn" id="closeCartBtn">Close</button>
+  </div>
+  <div class="drawer-body" id="cartItems"></div>
+  <div class="drawer-foot">
+    <div class="total">
+      <span>Total</span>
+      <span id="cartTotal">RM0.00</span>
+    </div>
+    <button class="btn primary" id="checkoutBtn">Checkout</button>
+    <div style="color:var(--muted); font-size:12px; line-height:1.6;">
+      Checkout will open TikTok links for each item so customers can buy.
+    </div>
+  </div>
+</aside>
+
+<script src="assets/app.js"></script>
+<script>
+  // ===== HELPER =====
+  function $(id){ return document.getElementById(id); }
+  function escapeHtml(text){
+    const map = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' };
+    return text.replace(/[&<>"']/g, m => map[m]);
+  }
+  function cartCount(cart){ return Object.values(cart).reduce((a,b)=>a+b,0); }
+
+  // ===== PRODUCTS =====
+  const PRODUCTS = [
+    // WOMEN
+    {id:"w1", category:"women", name:"Linen Blouse — Cloud", price:23.90, tag:"New", color:"Cream", sizes:"S–XL", image:"assets/women-linen-blouse.jpeg", tiktok:"https://vt.tiktok.com/ZSHEEhcosro9s-WMQ28/"},
+    {id:"w2", category:"women", name:"Minimal Dress — Sand", price:36.99, tag:"Bestseller", color:"Beige", sizes:"S–L", image:"assets/women-dress-sand.jpeg", tiktok:"https://vt.tiktok.com/ZSHEEhQ18n9Y1-rTwFa/"},
+    {id:"w3", category:"women", name:"Everyday Cardigan — Mocha", price:32.50, tag:"Essential", color:"Brown", sizes:"Free size", image:"assets/cardigan.jpeg", tiktok:"https://vt.tiktok.com/ZSHEErxn6KFn2-YknNF/"},
+    {id:"w4", category:"women", name:"Wide Pants", price:19.90, tag:"New", color:"Oat", sizes:"S–XL", image:"assets/pants.jpeg", tiktok:"https://vt.tiktok.com/ZSHEErKKahmTC-O954H/"},
+
+    // MEN
+    {id:"m1", category:"men", name:"Relax Tee — Black", price:39.80, tag:"New", color:"Black", sizes:"S–XXL", image:"assets/m1.jpeg", tiktok:"https://vt.tiktok.com/ZSHEEkfmspXa9-URbpC/"},
+    {id:"m2", category:"men", name:"Overshirt — Stone", price:29.90, tag:"Bestseller", color:"Stone", sizes:"M–XXL", image:"assets/m2.jpeg", tiktok:"https://vt.tiktok.com/ZSHEEkVoGQbSA-MxwfB/"},
+    {id:"m3", category:"men", name:"Cargo Pants — Olive", price:21.71, tag:"Essential", color:"Olive", sizes:"30–36", image:"assets/m3.jpeg", tiktok:"https://vt.tiktok.com/ZSHEEkohrvPxR-ybEid/"},
+    {id:"m4", category:"men", name:"Hoodie — Ash", price:41.20, tag:"New", color:"Grey", sizes:"S–XL", image:"assets/m4.jpeg", tiktok:"https://vt.tiktok.com/ZSHEEB68vJX2N-DV5ey/"},
+
+    // KIDS
+    {id:"k1", category:"kids", name:"Kids Set — Soft Blue", price:7.90, tag:"New", color:"Blue", sizes:"1–6Y", image:"assets/k1.jpeg", tiktok:"https://vt.tiktok.com/ZSHEESdKSaqXN-MPI5F/"},
+    {id:"k2", category:"kids", name:"Kids Tee — Milk", price:11.90, tag:"Essential", color:"White", sizes:"1–8Y", image:"assets/k2.jpeg", tiktok:"https://vt.tiktok.com/ZSHEEAF3e9kHc-z5CF0/"},
+    {id:"k3", category:"kids", name:"Kids Hoodie — Cocoa", price:36.55, tag:"Bestseller", color:"Brown", sizes:"2–8Y", image:"assets/k3.jpeg", tiktok:"https://vt.tiktok.com/ZSHEESw8d74QN-2L3sX/"},
+    {id:"k4", category:"kids", name:"Kids Jogger — Grey", price:14.93, tag:"New", color:"Grey", sizes:"1–8Y", image:"assets/k4.jpeg", tiktok:"https://vt.tiktok.com/ZSHEEBXhLJGPe-fPJSH/"}
+  ];
+
+  // ===== CART STATE =====
+  let cart = JSON.parse(localStorage.getItem("cart") || "{}");
+
+  function saveCart(cart){ localStorage.setItem("cart", JSON.stringify(cart)); }
+
+  function productCard(p){
+    const isNew = (p.tag || "").toLowerCase() === "new";
+    return `
+      <article class="card" data-category="${p.category}" data-tag="${(p.tag||"").toLowerCase()}" data-name="${escapeHtml(p.name)}">
+        <div class="thumb">
+          <div class="tag">${p.tag || "Item"}</div>
+          <img src="${p.image}" alt="${escapeHtml(p.name)}"/>
+        </div>
+        <div class="card-body">
+          <div class="title">
+            <b>${escapeHtml(p.name)}</b>
+            <div class="price">RM${p.price.toFixed(2)}</div>
+          </div>
+          <p class="desc">Color: ${escapeHtml(p.color)} • Sizes: ${escapeHtml(p.sizes)}</p>
+          <div class="row">
+            <span class="chip">${p.category.toUpperCase()}</span>
+            ${isNew ? `<span class="chip">Just in</span>` : `<span class="chip">Popular</span>`}
+          </div>
+          <div class="card-actions">
+            <button class="btn primary" onclick="addToCart('${p.id}')">Add to Cart</button>
+            <a class="btn" href="${p.tiktok}" target="_blank" rel="noopener">Buy on TikTok</a>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  function renderAll(){
+    $("womenGrid").innerHTML = PRODUCTS.filter(p=>p.category==="women").map(productCard).join("");
+    $("menGrid").innerHTML   = PRODUCTS.filter(p=>p.category==="men").map(productCard).join("");
+    $("kidsGrid").innerHTML  = PRODUCTS.filter(p=>p.category==="kids").map(productCard).join("");
+  }
+
+  function saveAndRefresh(){
+    saveCart(cart);
+    updateCartUI();
+  }
+
+  function addToCart(productId){
+    cart[productId] = (cart[productId] || 0) + 1;
+    saveAndRefresh();
+    openCart();
+  }
+  function changeQty(productId, delta){
+    const next = (cart[productId] || 0) + delta;
+    if(next <= 0) delete cart[productId];
+    else cart[productId] = next;
+    saveAndRefresh();
+  }
+  function removeItem(productId){ delete cart[productId]; saveAndRefresh(); }
+  function cartTotal(){ return Object.entries(cart).reduce((sum,[id,qty])=>{ const p=PRODUCTS.find(x=>x.id===id); return p?sum+p.price*qty:sum; },0); }
+
+  function updateCartUI(){
+    $("cartCount").textContent = cartCount(cart);
+    const itemsEl = $("cartItems");
+    const entries = Object.entries(cart);
+    if(entries.length === 0){
+      itemsEl.innerHTML = `<div style="border:1px dashed var(--line); border-radius:16px; padding:14px; color:var(--muted); line-height:1.7;">Your cart is empty. Add some items to start shopping.</div>`;
+      $("cartTotal").textContent = "RM0.00";
+      return;
+    }
+    itemsEl.innerHTML = entries.map(([id, qty])=>{
+      const p = PRODUCTS.find(x=>x.id===id);
+      if(!p) return "";
+      return `
+        <div class="cart-item">
+          <div>
+            <b>${escapeHtml(p.name)}</b>
+            <div class="meta">RM${p.price.toFixed(2)} • ${escapeHtml(p.category.toUpperCase())}</div>
+            <div class="meta" style="margin-top:6px;">
+              <a class="btn" style="padding:8px 10px; font-size:13px;" href="${p.tiktok}" target="_blank" rel="noopener">Open TikTok link</a>
+            </div>
+          </div>
+          <div>
+            <div class="qty">
+              <button onclick="changeQty('${id}', -1)">−</button>
+              <span>${qty}</span>
+              <button onclick="changeQty('${id}', 1)">+</button>
+            </div>
+            <div class="remove" onclick="removeItem('${id}')">Remove</div>
+          </div>
+        </div>
+      `;
+    }).join("");
+    $("cartTotal").textContent = `RM${cartTotal().toFixed(2)}`;
+  }
+
+  function checkout(){ Object.keys(cart).forEach(id=>{ const p=PRODUCTS.find(x=>x.id===id); if(p&&p.tiktok) window.open(p.tiktok,"_blank","noopener"); }); }
+
+  // FILTER + SEARCH
+  let activeFilter="all";
+  function applyFilters(){
+    const q=$("searchInput").value.trim().toLowerCase();
+    document.querySelectorAll(".card").forEach(card=>{
+      const cat = card.getAttribute("data-category");
+      const tag = card.getAttribute("data-tag");
+      const name = (card.getAttribute("data-name")||"").toLowerCase();
+      const matchSearch = !q || name.includes(q);
+      const matchFilter = activeFilter==="all"||activeFilter===cat||(activeFilter==="new"&&tag==="new");
+      card.style.display = (matchSearch && matchFilter) ? "" : "none";
+    });
+  }
+  document.addEventListener("click",e=>{
+    const tab=e.target.closest(".tab");
+    if(!tab) return;
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    activeFilter = tab.dataset.filter;
+    applyFilters();
+  });
+  $("searchInput").addEventListener("input",applyFilters);
+
+  // CART DRAWER
+  const overlay=$("overlay"), drawer=$("drawer");
+  function openCart(){ overlay.classList.add("show"); drawer.classList.add("show"); }
+  function closeCart(){ overlay.classList.remove("show"); drawer.classList.remove("show"); }
+  $("openCartBtn").addEventListener("click", openCart);
+  $("closeCartBtn").addEventListener("click", closeCart);
+  overlay.addEventListener("click", closeCart);
+  $("checkoutBtn").addEventListener("click", checkout);
+
+  function scrollToSection(id){ document.getElementById(id).scrollIntoView({behavior:"smooth", block:"start"}); }
+
+  // INIT
+  renderAll();
+  updateCartUI();
+  applyFilters();
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
